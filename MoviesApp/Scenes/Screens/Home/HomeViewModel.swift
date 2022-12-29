@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import RxSwift
 
 class HomeViewModel {
     private weak var view: HomeView?
     private var router: HomeRouter?
+    private var managerConnections = ManagerConnections()
     
     func bind(view: HomeView, router: HomeRouter) {
         self.view = view
@@ -17,5 +19,9 @@ class HomeViewModel {
         
         //Bindear el router con la vista
         self.router?.setSourceView(view)
+    }
+    
+    func getMoviesList() -> Observable<[Movie]> {
+        return managerConnections.getPopularMovies()
     }
 }

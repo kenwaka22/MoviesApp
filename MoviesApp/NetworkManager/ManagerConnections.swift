@@ -15,7 +15,7 @@ class ManagerConnections {
         return Observable.create { observer in
             
             let session = URLSession.shared
-            var request = URLRequest(url: URL(string: Constants.URL.main + Constants.EndPoints.urlListPopularMovies)!)
+            var request = URLRequest(url: URL(string: Constants.URL.main + Constants.EndPoints.urlListPopularMovies + Constants.apiKey)!)
             request.httpMethod = "GET"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             
@@ -30,10 +30,11 @@ class ManagerConnections {
                         observer.onError(error)
                         print("Ha ocurrido un error: \(error.localizedDescription)")
                     }
+                } else {
+                    print("Error")
                 }
                 observer.onCompleted()
             }.resume()
-            
             return Disposables.create {
                 session.finishTasksAndInvalidate()
             }

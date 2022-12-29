@@ -27,6 +27,8 @@ struct Movie: Decodable {
     let image: String
     
     enum CodingKeys: String, CodingKey {
+        case title
+        case popularity
         case movieId = "id"
         case voteCount = "vote_count"
         case originalTitle = "original_title"
@@ -34,6 +36,5 @@ struct Movie: Decodable {
         case synopsis = "overview"
         case releaseDate = "release_date"
         case image = "poster_path"
-        case title, popularity
     }
 }
