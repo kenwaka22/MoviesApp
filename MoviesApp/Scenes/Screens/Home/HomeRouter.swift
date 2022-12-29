@@ -9,13 +9,9 @@ import Foundation
 import UIKit
 
 class HomeRouter {
-    var vc: UIViewController {
-        return createViewController()
-    }
-    
     private var sourceView: UIViewController?
     
-    private func createViewController() -> UIViewController {
+    func createViewController() -> UIViewController {
         let view = HomeView(nibName: "HomeView", bundle: Bundle.main)
         return view
     }
@@ -23,5 +19,13 @@ class HomeRouter {
     func setSourceView(_ sourceView: UIViewController?) {
         guard let view = sourceView else { fatalError("Error desconocido") }
         self.sourceView = view
+    }
+    
+    func navigateToDetailView(movie: Movie) {
+        let detailView = DetailRouter().createViewController(with: movie)
+        sourceView?.navigationController?.pushViewController(detailView, animated: true)
+//        let detailView = DetailView()
+//        sourceView?.navigationController?.pushViewController(detailView, animated: true)
+
     }
 }

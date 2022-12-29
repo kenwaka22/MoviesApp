@@ -12,19 +12,21 @@ import RxCocoa
 class HomeView: UIViewController {
     
     //MARK: - Atributes
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var activity: UIActivityIndicatorView!
+    @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var activity: UIActivityIndicatorView!
     private var router = HomeRouter()
     private var viewModel = HomeViewModel()
     private var disposeBag = DisposeBag()
     private var movies = [Movie]()
     private var filteredMovies = [Movie]()
-    lazy var searchController: UISearchController = {
+    
+    //UI
+    private lazy var searchController: UISearchController = {
         let element = UISearchController(searchResultsController: nil)
         element.hidesNavigationBarDuringPresentation = true
         element.obscuresBackgroundDuringPresentation = false
         element.searchBar.sizeToFit()
-        element.searchBar.barStyle = .black
+        element.searchBar.barStyle = .default
         element.searchBar.backgroundColor = .clear
         element.searchBar.placeholder = "Search a movie"
         return element
@@ -33,16 +35,28 @@ class HomeView: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "MovieApp"
+        configureBindings()
+        configureNavigationBar()
         configureTableView()
-        viewModel.bind(view: self, router: router)
-        activity.startAnimating()
-        getData()
+        configureActivity()
+        displayMovies()
         configureSearchBarController()
     }
     
     //MARK: - Methods
-    private func getData() {
+    private func configureBindings() {
+        viewModel.bind(view: self, router: router)
+    }
+    
+    private func configureNavigationBar() {
+        navigationItem.title = "MovieApp"
+    }
+    
+    private func configureActivity() {
+        activity.startAnimating()
+    }
+    
+    private func displayMovies() {
         return viewModel.getMoviesList()
         //Manejar la concurrencia o hilos en Rx
             .subscribe(on: MainScheduler.instance)
@@ -115,6 +129,16 @@ extension HomeView: UITableViewDelegate {
             cell.movie = movies[indexPath.row]
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var movie: Movie
+        if searchController.isActive && searchController.searchBar.text != "" {
+            movie = filteredMovies[indexPath.row]
+        } else {
+            movie = movies[indexPath.row]
+        }
+        viewModel.showDetailView(movie: movie)
     }
 }
 

@@ -13,12 +13,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let scene = (scene as? UIWindowScene) else { return }
-        window?.windowScene = scene
         
-        let vc = HomeRouter().vc
+        guard let scene = (scene as? UIWindowScene) else { return }
+        
+        //let vc = HomeRouter().createViewController()
+        let vc = HomeView(nibName: "HomeView", bundle: Bundle.main)
         let nc = UINavigationController(rootViewController: vc)
         
+        window?.windowScene = scene
         window?.rootViewController = nc
         window?.makeKeyAndVisible()
     }
