@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 class HomeView: UIViewController {
     
@@ -17,14 +18,27 @@ class HomeView: UIViewController {
     private var viewModel = HomeViewModel()
     private var disposeBag = DisposeBag()
     private var movies = [Movie]()
+    private var filteredMovies = [Movie]()
+    lazy var searchController: UISearchController = {
+        let element = UISearchController(searchResultsController: nil)
+        element.hidesNavigationBarDuringPresentation = true
+        element.obscuresBackgroundDuringPresentation = false
+        element.searchBar.sizeToFit()
+        element.searchBar.barStyle = .black
+        element.searchBar.backgroundColor = .clear
+        element.searchBar.placeholder = "Search a movie"
+        return element
+    }()
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = "MovieApp"
         configureTableView()
         viewModel.bind(view: self, router: router)
         activity.startAnimating()
         getData()
+        configureSearchBarController()
     }
     
     //MARK: - Methods
@@ -61,30 +75,65 @@ class HomeView: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(UINib(nibName: "MovieCell", bundle: nil), forCellReuseIdentifier: MovieCell.reuseIdentifier)
     }
+    
+    private func configureSearchBarController(){
+        let searchBar = searchController.searchBar
+        searchController.delegate = self
+        tableView.tableHeaderView = searchBar
+        tableView.contentOffset = CGPoint(x: 0, y: searchBar.frame.size.height)
+        
+        searchBar.rx.text
+            .orEmpty
+            .distinctUntilChanged()
+            .subscribe(onNext: { result in
+                self.filteredMovies = self.movies.filter({ movie in
+                    return movie.title.contains(result)
+                })
+                self.reloadTableView()
+            })
+            .disposed(by: disposeBag)
+    }
 }
 
-//MARK: - Delegates
+//MARK: - TableView Delegates
 extension HomeView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies.count
+        if searchController.isActive && searchController.searchBar.text != "" {
+            return filteredMovies.count
+        } else {
+            return movies.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.reuseIdentifier, for: indexPath) as? MovieCell else { fatalError("Unable to dequeue MovieCell") }
         
-                
-        cell.movie = movies[indexPath.row]        
+        if searchController.isActive && searchController.searchBar.text != "" {
+            cell.movie = filteredMovies[indexPath.row]
+        } else {
+            cell.movie = movies[indexPath.row]
+        }
         return cell
     }
 }
 
-//MARK: - DataSource
+//MARK: - TableView DataSource
 extension HomeView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 200
     }
 }
+
+//MARK: - Search Delegate
+extension HomeView: UISearchControllerDelegate {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchController.isActive = false
+        reloadTableView()
+    }
+}
+
+
 
 
 
