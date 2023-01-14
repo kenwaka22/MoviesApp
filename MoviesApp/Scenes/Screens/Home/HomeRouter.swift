@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 class HomeRouter {
-    private var sourceView: UIViewController?
+    private weak var sourceView: UIViewController?
     
     func createViewController() -> UIViewController {
         let view = HomeView(nibName: "HomeView", bundle: Bundle.main)
@@ -22,8 +22,9 @@ class HomeRouter {
     }
     
     func navigateToDetailView(movie: Movie) {
-        let detailView = DetailRouter().createViewController(with: movie)
-        sourceView?.navigationController?.pushViewController(detailView, animated: true)
+        //let detailView = DetailRouter().createViewController(with: movie)
+        let vc = DetailRouter().createViewController(with: movie)
+        sourceView?.navigationController?.pushViewController(vc, animated: true)
 //        let detailView = DetailView()
 //        sourceView?.navigationController?.pushViewController(detailView, animated: true)
 

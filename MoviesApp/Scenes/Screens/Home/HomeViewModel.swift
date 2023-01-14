@@ -28,4 +28,8 @@ class HomeViewModel {
     func showDetailView(movie: Movie) {
         router?.navigateToDetailView(movie: movie)
     }
+    
+    //PRUEBA
+    func prueba() {
+    }
 }

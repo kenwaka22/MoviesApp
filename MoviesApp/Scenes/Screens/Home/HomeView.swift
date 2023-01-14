@@ -41,6 +41,7 @@ class HomeView: UIViewController {
         configureActivity()
         displayMovies()
         configureSearchBarController()
+        viewModel.prueba()
     }
     
     //MARK: - Methods
@@ -84,8 +85,6 @@ class HomeView: UIViewController {
     private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        print(MovieCell.self)
-        print(MovieCell.reuseIdentifier)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(UINib(nibName: "MovieCell", bundle: nil), forCellReuseIdentifier: MovieCell.reuseIdentifier)
     }

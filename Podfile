@@ -8,5 +8,4 @@ target 'MoviesApp' do
   # Pods for MoviesApp
     pod 'RxSwift'
     pod 'RxCocoa'
-
 end

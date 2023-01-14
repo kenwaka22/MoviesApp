@@ -10,7 +10,7 @@ import UIKit
 
 class DetailRouter {
     // MARK: - Atributes
-    private var sourceView: UIViewController?
+    private weak var sourceView: UIViewController?
     private var movie: Movie?
     
     //MARK: - Methods
