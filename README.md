@@ -8,5 +8,5 @@ Popular Movies list
  
 ## Demo
 
-<img src="images/demo.mov" width=200 />
+<img src="images/Demo.mov" width=200 />
 
